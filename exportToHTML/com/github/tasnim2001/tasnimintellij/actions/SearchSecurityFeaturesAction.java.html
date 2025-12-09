@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>SearchSecurityFeaturesAction.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+SearchSecurityFeaturesAction.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com</span><span class="s2">.</span><span class="s1">github</span><span class="s2">.</span><span class="s1">tasnim2001</span><span class="s2">.</span><span class="s1">tasnimintellij</span><span class="s2">.</span><span class="s1">actions</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">github</span><span class="s2">.</span><span class="s1">tasnim2001</span><span class="s2">.</span><span class="s1">tasnimintellij</span><span class="s2">.</span><span class="s1">dialog</span><span class="s2">.</span><span class="s1">SecurityReportDialog</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">github</span><span class="s2">.</span><span class="s1">tasnim2001</span><span class="s2">.</span><span class="s1">tasnimintellij</span><span class="s2">.</span><span class="s1">keywords</span><span class="s2">.*;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">intellij</span><span class="s2">.</span><span class="s1">openapi</span><span class="s2">.</span><span class="s1">actionSystem</span><span class="s2">.</span><span class="s1">AnAction</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">intellij</span><span class="s2">.</span><span class="s1">openapi</span><span class="s2">.</span><span class="s1">actionSystem</span><span class="s2">.</span><span class="s1">AnActionEvent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">intellij</span><span class="s2">.</span><span class="s1">openapi</span><span class="s2">.</span><span class="s1">actionSystem</span><span class="s2">.</span><span class="s1">CommonDataKeys</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">intellij</span><span class="s2">.</span><span class="s1">openapi</span><span class="s2">.</span><span class="s1">project</span><span class="s2">.</span><span class="s1">Project</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">intellij</span><span class="s2">.</span><span class="s1">psi</span><span class="s2">.</span><span class="s1">PsiFile</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">jetbrains</span><span class="s2">.</span><span class="s1">annotations</span><span class="s2">.</span><span class="s1">NotNull</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">List</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Map</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">SearchSecurityFeaturesAction </span><span class="s0">extends </span><span class="s1">AnAction </span><span class="s2">{</span>
+
+    <span class="s3">/* @Override 
+     public void actionPerformed(@NotNull AnActionEvent e) { 
+ 
+         Project project = e.getProject(); 
+         PsiFile file = e.getData(CommonDataKeys.PSI_FILE); 
+         Editor editor = e.getData(CommonDataKeys.EDITOR); 
+ 
+         if (project == null || file == null || editor == null) { 
+             Messages.showErrorDialog(&quot;No file selected!&quot;, &quot;Error&quot;); 
+             return; 
+         } 
+ 
+         // Keywords laden 
+         Map&lt;String, Object&gt; keywords = KeywordLoader.loadKeywords(); 
+ 
+         // NEUER SCAN — liefert KeywordMatch (mit start, end, hit, category) 
+         List&lt;KeywordMatch&gt; results = KeywordScanner.scanFileWithOffsets(file, keywords); 
+ 
+         // HIGHLIGHT 
+         for (KeywordMatch match : results) { 
+             HighlighterUtil.highlight(editor, match.start, match.end); 
+         } 
+ 
+         // POPUP 
+         if (results.isEmpty()) { 
+             Messages.showInfoMessage(project, 
+                     &quot;No security features found.&quot;, 
+                     &quot;Scan Complete&quot;); 
+         } else { 
+             StringBuilder msg = new StringBuilder(&quot;Security Scan Results:\n\n&quot;); 
+ 
+             for (KeywordMatch m : results) { 
+                 msg.append(m.main) 
+                         .append(&quot; → &quot;) 
+                         .append(m.sub) 
+                         .append(&quot; | Found: &quot;) 
+                         .append(m.hit) 
+                         .append(&quot;\n&quot;); 
+             } 
+ 
+             Messages.showInfoMessage(project, 
+                     msg.toString(), 
+                     &quot;Security Features Found&quot;); 
+         } 
+     }*/</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">@NotNull AnActionEvent e</span><span class="s2">) {</span>
+
+        <span class="s1">Project project </span><span class="s2">= </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getProject</span><span class="s2">();</span>
+        <span class="s1">PsiFile file </span><span class="s2">= </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getData</span><span class="s2">(</span><span class="s1">CommonDataKeys</span><span class="s2">.</span><span class="s1">PSI_FILE</span><span class="s2">);</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">project </span><span class="s2">== </span><span class="s0">null </span><span class="s2">|| </span><span class="s1">file </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s0">return</span><span class="s2">; </span><span class="s3">// Kein Popup, wie du wolltest</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// Keywords laden</span>
+        <span class="s1">Map</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">, </span><span class="s1">Object</span><span class="s2">&gt; </span><span class="s1">keywords </span><span class="s2">= </span><span class="s1">KeywordLoader</span><span class="s2">.</span><span class="s1">loadKeywords</span><span class="s2">();</span>
+
+        <span class="s3">// Scan ausführen → Liste der Matches</span>
+        <span class="s3">//List&lt;KeywordMatch&gt; results = KeywordScanner.scanFileWithOffsets(file, keywords);</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">PSISecurityScanner</span><span class="s2">.</span><span class="s1">Result</span><span class="s2">&gt; </span><span class="s1">results </span><span class="s2">= </span><span class="s1">PSISecurityScanner</span><span class="s2">.</span><span class="s1">scan</span><span class="s2">(</span><span class="s1">file</span><span class="s2">, </span><span class="s1">keywords</span><span class="s2">);</span>
+
+        <span class="s3">// Ergebnisse als Text aufbereiten</span>
+       <span class="s3">/* List&lt;String&gt; resultText = results.stream().map(r -&gt; 
+                r.main + &quot; → &quot; + r.sub + &quot; | Found: &quot; + r.hit 
+        ).toList();*/</span>
+
+        
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; </span><span class="s1">resultText </span><span class="s2">= </span><span class="s1">results</span><span class="s2">.</span><span class="s1">stream</span><span class="s2">().</span><span class="s1">map</span><span class="s2">(</span><span class="s1">r -&gt;</span>
+                <span class="s1">r</span><span class="s2">.</span><span class="s1">main </span><span class="s2">+ </span><span class="s4">&quot; → &quot; </span><span class="s2">+ </span><span class="s1">r</span><span class="s2">.</span><span class="s1">sub </span><span class="s2">+ </span><span class="s4">&quot; | Found: &quot; </span><span class="s2">+ </span><span class="s1">r</span><span class="s2">.</span><span class="s1">hit </span><span class="s2">+ </span><span class="s4">&quot; | Line: &quot; </span><span class="s2">+ </span><span class="s1">r</span><span class="s2">.</span><span class="s1">line</span>
+        <span class="s2">).</span><span class="s1">toList</span><span class="s2">();</span>
+
+
+
+
+        <span class="s0">new </span><span class="s1">SecurityReportDialog</span><span class="s2">(</span>
+                <span class="s1">results</span><span class="s2">.</span><span class="s1">stream</span><span class="s2">().</span><span class="s1">map</span><span class="s2">(</span><span class="s1">r -&gt;</span>
+                        <span class="s1">r</span><span class="s2">.</span><span class="s1">main </span><span class="s2">+ </span><span class="s4">&quot; → &quot; </span><span class="s2">+ </span><span class="s1">r</span><span class="s2">.</span><span class="s1">sub </span><span class="s2">+ </span><span class="s4">&quot; | Found: &quot; </span><span class="s2">+ </span><span class="s1">r</span><span class="s2">.</span><span class="s1">hit</span>
+                <span class="s2">).</span><span class="s1">toList</span><span class="s2">()</span>
+        <span class="s2">).</span><span class="s1">show</span><span class="s2">();</span>
+
+
+
+    <span class="s2">}</span>
+
+
+<span class="s2">}</span></pre>
+</body>
+</html>

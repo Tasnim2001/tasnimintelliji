@@ -1,15 +1,49 @@
-<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.tasnim2001.tasnimintelliji</id>
     <name>tasnimintelliji</name>
     <vendor>tasnim2001</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
+    <!-- KORREKTES Namespace -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.tasnim2001.tasnimintelliji.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.tasnim2001.tasnimintelliji.startup.MyProjectActivity" />
+
+        <!-- TOOL WINDOW REGISTRIEREN -->
+        <toolWindow id="SecurityScan"
+                    anchor="right"
+                    factoryClass="com.github.tasnim2001.tasnimintelliji.toolwindow.SecurityToolWindowFactory"
+                    icon="/icons/search.svg"
+                     />
     </extensions>
+
+    <!-- ACTIONS REGISTRIEREN -->
+    <actions>
+
+        <action id="AddAnnotation"
+                class="com.github.tasnim2001.tasnimintelliji.actions.AddAnnotationAction"
+                text="Add Annotation"
+                description="Add a custom annotation to a selected method">
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="EditorCut"/>
+        </action>
+
+        <!-- DEINE FEHLENDE ACTION HIER! -->
+        <action id="SearchSecurityFeaturesAction"
+                class="com.github.tasnim2001.tasnimintelliji.actions.SearchSecurityFeaturesAction"
+                text="Search Security Features"
+                description="Scan file for security keywords"
+                icon="/icons/search.svg">
+
+            <!-- Rechtsklick im Editor -->
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+
+            <!-- Toolbar oben rechts -->
+            <add-to-group group-id="MainToolbarRight" anchor="last"/>
+
+        </action>
+
+    </actions>
+
 </idea-plugin>

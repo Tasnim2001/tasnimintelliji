@@ -1,0 +1,143 @@
+{
+"Access_Control": {
+"Authentication": [
+"Authenticat.*",
+"Password",
+"Credential",
+"OTP",
+"X509",
+"MFA",
+"SSO",
+"OAuth",
+"JWT",
+"Cookie",
+"Keycloak",
+"IdP"
+],
+"Authorization": [
+"Authoriz.*",
+"AccessManager",
+"Role",
+"Privilege",
+"Perm",
+"ACL",
+"RBAC",
+"ABAC",
+"MAC",
+"DAC",
+"TimeRestrictedAccess",
+"decision",
+"allow",
+"deny"
+]
+},
+"Cryptography": {
+"Encryption": [
+"encrypt",
+"decrypt",
+"Cipher",
+"KeyGenerator",
+"Secret",
+"AES",
+"RSA",
+"Blowfish",
+"Mac",
+"SecureChannel",
+"TLS",
+"SSL"
+],
+"Key_Management": [
+"keyStore",
+"keyPair",
+"keyFactory",
+"keyAgreement",
+"revo(ke|cation)",
+"Cert(ificate)?",
+"TrustManager",
+"generateKeyPair"
+],
+"Signature": [
+"Sign",
+"PKCS12",
+"verify"
+],
+"Hashing": [
+"SHA",
+"MD5",
+"hash",
+"digest"
+],
+"Steganography": [
+"ImageProcessor",
+"Stego",
+"Base64"
+]
+},
+"Security_Monitoring": {
+"Logging": [
+"login.?success",
+"login.?failure",
+"unauthorized.?access",
+"privilege.?escalation",
+"audit*log.?entry",
+"compliance.?check"
+],
+"Automated_Response": [
+"ResponseHandler",
+"AlertService"
+],
+"History_Maintenance": [
+"AuditTrail",
+"TransactionLogger"
+]
+},
+"Secure_Data_Handling": {
+"Data_Validation": [
+"validate",
+"Whitelist",
+"Blacklist",
+"AntiSamy",
+"CommonsValidator"
+],
+"Data_Sanitization": [
+"sanitize",
+"unescape",
+"escape"
+],
+"Retention_Control": [
+"DataRetentionPolicy",
+"RetentionManager"
+],
+"Secure_Storage": [
+"EncryptedFileSystem",
+"SecureStore",
+"KeyVault"
+],
+"Trusted_Sources": [
+"Secure.?Random",
+"TimeSync",
+"salt"
+]
+},
+"System_State_Protection": {
+"Resource_Management": [
+"ThreadPool",
+"ResourceAllocator"
+],
+"System_State_Validation": [
+"StateVerifier",
+"Checksum",
+"crc",
+"HashValidator"
+],
+"Session_Management": [
+"Session",
+"CSRF"
+]
+},
+"Miscellaneous": [
+"SecurityPolicy",
+"Security"
+]
+}
+
