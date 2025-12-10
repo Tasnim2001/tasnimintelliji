@@ -16,7 +16,6 @@ public class KeywordScanner {
         return code;
     }
 
-    // MAIN METHOD — returns KeywordMatch objects with offsets
     public static List<KeywordMatch> scanFileWithOffsets(PsiFile file, Map<String, Object> keywords) {
         List<KeywordMatch> found = new ArrayList<>();
 
@@ -27,13 +26,9 @@ public class KeywordScanner {
             String mainCategory = entry.getKey();
             Object value = entry.getValue();
 
-            // CASE 1 — direct list
             if (value instanceof List<?>) {
                 scanList(mainCategory, "", (List<?>) value, code, found);
-            }
-
-            // CASE 2 — nested subcategories
-            else if (value instanceof Map<?, ?> nested) {
+            } else if (value instanceof Map<?, ?> nested) {
                 for (Object sub : nested.keySet()) {
                     Object subList = nested.get(sub);
                     if (subList instanceof List<?>) {
@@ -46,10 +41,10 @@ public class KeywordScanner {
         return found;
     }
 
-    // NUR KeywordMatch Version!
     private static void scanList(String main, String sub, List<?> list, String code, List<KeywordMatch> found) {
 
         Set<String> seen = new HashSet<>();
+        String[] lines = code.split("\n"); // <-- nötig für die Zeilenberechnung
 
         for (Object o : list) {
             String patternText = o.toString();
@@ -59,15 +54,19 @@ public class KeywordScanner {
             while (m.find()) {
                 String hit = m.group().trim();
 
-                // FILTER — prevent false positives
+                // FILTER
                 if (hit.isEmpty()) continue;
-                if (hit.length() > 25) continue;                     // whole line skip
-                if (hit.matches("^[A-Za-z0-9_]+\\s*\\(")) continue;  // method name skip
-                if (hit.matches("^[A-Za-z0-9_]+\\s*=")) continue;    // assignment skip
+                if (hit.length() > 25) continue;
+                if (hit.matches("^[A-Za-z0-9_]+\\s*\\(")) continue;
+                if (hit.matches("^[A-Za-z0-9_]+\\s*=")) continue;
 
                 String unique = (main + "|" + sub + "|" + hit).toLowerCase();
                 if (seen.contains(unique)) continue;
                 seen.add(unique);
+
+                // 🔥 Zeilennummer berechnen
+                int offset = m.start();
+                int lineNumber = calcLineNumber(code, offset);
 
                 found.add(
                         new KeywordMatch(
@@ -76,10 +75,21 @@ public class KeywordScanner {
                                 patternText,
                                 hit,
                                 m.start(),
-                                m.end()
+                                m.end(),
+                                lineNumber  // <-- 🔥 JETZT WIRD line ÜBERGEBEN
                         )
                 );
             }
         }
+    }
+
+    private static int calcLineNumber(String fullText, int offset) {
+        int line = 1;
+        for (int i = 0; i < offset; i++) {
+            if (fullText.charAt(i) == '\n') {
+                line++;
+            }
+        }
+        return line;
     }
 }

@@ -3,6 +3,7 @@ package com.github.tasnim2001.tasnimintelliji.keywords;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+
 import java.util.*;
 
 public class PSISecurityScanner {
@@ -22,78 +23,97 @@ public class PSISecurityScanner {
 
         @Override
         public String toString() {
-            return main + " → " + sub + " | " + hit + " in line " + line;
+            return main + " → " + sub + " | Found: " + hit + " | Line: " + line;
         }
     }
 
-    // Hauptscan-Methode
+
     public static List<Result> scan(PsiFile file, Map<String, Object> keywords) {
 
         Project project = file.getProject();
         Document document = PsiDocumentManager.getInstance(project).getDocument(file);
         List<Result> results = new ArrayList<>();
 
+
         file.accept(new JavaRecursiveElementWalkingVisitor() {
 
-            void check(String text, int offset) {
-                if (text == null) return;
+            void scanText(String text, int offset) {
+                if (text == null || text.isBlank()) return;
+
+                String lower = text.toLowerCase();
 
                 for (String main : keywords.keySet()) {
-                    Map<String, List<String>> category = (Map<String, List<String>>) keywords.get(main);
 
-                    for (String sub : category.keySet()) {
+                    Object value = keywords.get(main);
 
-                        for (String pattern : category.get(sub)) {
+                    // FALL 1 — einfache Liste
+                    if (value instanceof List<?> list) {
+                        for (Object o : list) {
+                            String pattern = o.toString().toLowerCase();
 
-                            if (text.toLowerCase().matches(".*" + pattern.toLowerCase() + ".*")) {
+                            if (lower.contains(pattern)) {
                                 int line = document.getLineNumber(offset) + 1;
-                                results.add(new Result(main, sub, pattern, line));
+                                results.add(new Result(main, "", pattern, line));
+                            }
+                        }
+                    }
+
+                    // FALL 2 — verschachtelte Maps
+                    else if (value instanceof Map<?, ?> subMap) {
+                        for (Object subKey : subMap.keySet()) {
+                            Object items = subMap.get(subKey);
+
+                            if (items instanceof List<?> list2) {
+                                for (Object o : list2) {
+                                    String pattern = o.toString().toLowerCase();
+
+                                    if (lower.contains(pattern)) {
+                                        int line = document.getLineNumber(offset) + 1;
+                                        results.add(new Result(main, subKey.toString(), pattern, line));
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
 
-            @Override
-            public void visitVariable(PsiVariable variable) {
-                check(variable.getName(), variable.getTextOffset());
-                super.visitVariable(variable);
-            }
-
-            @Override
-            public void visitMethod(PsiMethod method) {
-                check(method.getName(), method.getTextOffset());
-                super.visitMethod(method);
-            }
 
             @Override
             public void visitLiteralExpression(PsiLiteralExpression expression) {
                 Object value = expression.getValue();
-                if (value instanceof String) {
-                    check((String) value, expression.getTextOffset());
+                if (value instanceof String str) {
+                    scanText(str, expression.getTextOffset());
                 }
                 super.visitLiteralExpression(expression);
             }
 
             @Override
-            public void visitComment(PsiComment comment) {
-                check(comment.getText(), comment.getTextOffset());
-                super.visitComment(comment);
-            }
-
-            @Override
-            public void visitAnnotation(PsiAnnotation annotation) {
-                check(annotation.getText(), annotation.getTextOffset());
-                super.visitAnnotation(annotation);
+            public void visitIdentifier(PsiIdentifier identifier) {
+                scanText(identifier.getText(), identifier.getTextOffset());
+                super.visitIdentifier(identifier);
             }
 
             @Override
             public void visitMethodCallExpression(PsiMethodCallExpression call) {
                 PsiReferenceExpression ref = call.getMethodExpression();
-                check(ref.getReferenceName(), call.getTextOffset());
+                scanText(ref.getReferenceName(), call.getTextOffset());
                 super.visitMethodCallExpression(call);
             }
+
+            @Override
+            public void visitVariable(PsiVariable variable) {
+                scanText(variable.getName(), variable.getTextOffset());
+                super.visitVariable(variable);
+            }
+
+            @Override
+            public void visitAnnotation(PsiAnnotation annotation) {
+                scanText(annotation.getText(), annotation.getTextOffset());
+                super.visitAnnotation(annotation);
+            }
         });
+
         return results;
     }
 }

@@ -1,7 +1,7 @@
 package com.github.tasnim2001.tasnimintelliji.toolwindow;
 
+import com.github.tasnim2001.tasnimintelliji.keywords.PSISecurityScanner;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.components.JBTextArea;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,37 +11,31 @@ public class SecurityToolWindow {
 
     private final JPanel root;
 
-    public SecurityToolWindow(List<String> results) {
+    public SecurityToolWindow(List<PSISecurityScanner.Result> results) {
 
         root = new JPanel(new BorderLayout());
 
-        // --- Text Area ---
-        JBTextArea area = new JBTextArea();
-        area.setEditable(false);
+        String[] columns = {"Category", "Subcategory", "Found", "Line"};
 
-        StringBuilder sb = new StringBuilder();
-        for (String r : results) {
-            sb.append(r).append("\n\n");
+        String[][] data = new String[results.size()][4];
+
+        for (int i = 0; i < results.size(); i++) {
+            PSISecurityScanner.Result r = results.get(i);
+            data[i][0] = r.main;
+            data[i][1] = r.sub;
+            data[i][2] = r.hit;
+            data[i][3] = String.valueOf(r.line);
         }
-        area.setText(sb.toString());
 
-        // ADD SCROLLPANE
-        root.add(new JBScrollPane(area), BorderLayout.CENTER);
+        JTable table = new JTable(data, columns);
+        table.setFillsViewportHeight(true);
+        table.setRowHeight(24);
 
-        // --- Buttons ---
-        JButton refresh = new JButton("Refresh");
-        JButton close = new JButton("Close");
-
-        JPanel buttons = new JPanel();
-        buttons.add(refresh);
-        buttons.add(close);
-
-        root.add(buttons, BorderLayout.SOUTH);
+        JScrollPane scrollPane = new JBScrollPane(table);
+        root.add(scrollPane, BorderLayout.CENTER);
     }
 
     public JPanel getContent() {
         return root;
     }
 }
-
-
