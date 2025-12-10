@@ -8,18 +8,15 @@
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
-    <!-- KORREKTES Namespace -->
     <extensions defaultExtensionNs="com.intellij">
 
-        <!-- TOOL WINDOW REGISTRIEREN -->
+        <!-- TOOL WINDOW -->
         <toolWindow id="SecurityScan"
                     anchor="right"
                     factoryClass="com.github.tasnim2001.tasnimintelliji.toolwindow.SecurityToolWindowFactory"
-                    icon="/icons/search.svg"
-                     />
+                    icon="/icons/search.svg"/>
     </extensions>
 
-    <!-- ACTIONS REGISTRIEREN -->
     <actions>
 
         <action id="AddAnnotation"
@@ -29,19 +26,32 @@
             <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="EditorCut"/>
         </action>
 
-        <!-- DEINE FEHLENDE ACTION HIER! -->
+        <!-- BUTTON 1: Scan Current File -->
         <action id="SearchSecurityFeaturesAction"
                 class="com.github.tasnim2001.tasnimintelliji.actions.SearchSecurityFeaturesAction"
-                text="Search Security Features"
-                description="Scan file for security keywords"
+                text="Scan Current File"
+                description="Scan the currently open file"
                 icon="/icons/search.svg">
 
             <!-- Rechtsklick im Editor -->
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
 
-            <!-- Toolbar oben rechts -->
+            <!-- Toolbar rechts -->
             <add-to-group group-id="MainToolbarRight" anchor="last"/>
+        </action>
 
+        <!-- BUTTON 2: Scan Whole Project -->
+        <action id="SearchSecurityInProjectAction"
+                class="com.github.tasnim2001.tasnimintelliji.actions.SearchSecurityInProjectAction"
+                text="Scan Whole Project"
+                description="Scan the entire project for security issues"
+                icon="/icons/search.svg">
+
+            <!-- Rechtsklick im Editor -->
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+
+            <!-- Toolbar rechts -->
+            <add-to-group group-id="MainToolbarRight" anchor="last"/>
         </action>
 
     </actions>
